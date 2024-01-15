@@ -32,7 +32,8 @@ function createElement(type, props, ...children) {
     props: {
       ...props,
       children: children.map((child) => { // V3.5
-        return typeof child === "string" ? createTextNode(child) : child
+        const isTextNode = typeof child === "string" || typeof child === "number"
+        return isTextNode ? createTextNode(child) : child
       }),
     }
   }
@@ -62,7 +63,15 @@ function commitRoot() {
 
 function commitWork(fiber) {
   if (!fiber) return
-  fiber.parent.dom.append(fiber.dom)
+
+  let fiberParent = fiber.parent
+  while (!fiberParent.dom) {
+    fiberParent = fiberParent.parent
+  }
+
+  if (fiber.dom) {
+    fiberParent.parent.dom.append(fiber.dom)
+  }
   commitWork(fiber.child)
   commitWork(fiber.sibling)
 }
@@ -81,8 +90,7 @@ function updateProps(dom, props) {
   })
 }
 
-function initChildren(fiber) {
-  const children = fiber.props.children
+function initChildren(fiber, children) {
   let prevChild = null
   children.forEach((child, index) => {
     const newFiber = {
@@ -103,27 +111,47 @@ function initChildren(fiber) {
   })
 }
 
-function performWorkOfUnit(fiber) {
+function undateFunctionComponent(fiber) {
+  // 3. 转换链表 设置好指针
+  const children = [fiber.type(fiber.props)]
+
+  initChildren(fiber, children)
+}
+
+function undateHostComponent(fiber) {
   // 1. 创建 dom
   if (!fiber.dom) {
     const dom = (fiber.dom = createDom(fiber.type))
-    // fiber.parent.dom.append(dom)
-
     // 2. 处理 props
     updateProps(dom, fiber.props)
   }
 
   // 3. 转换链表 设置好指针
-  initChildren(fiber)
+  const children = fiber.props.children
+  initChildren(fiber, children)
+}
+
+function performWorkOfUnit(fiber) {
+  const isFunctionComponent = typeof fiber.type === "function"
+
+  if (isFunctionComponent) {
+    undateFunctionComponent(fiber)
+  } else {
+    undateHostComponent(fiber)
+  }
 
   // 4. 返回下一个要执行的任务
   if(fiber.child) {
     return fiber.child
   }
-  if (fiber.sibling) {
-    return fiber.sibling
+
+  let nextFiber = fiber
+  while (nextFiber) {
+    if (nextFiber.sibling) {
+      return nextFiber.sibling
+    }
+    nextFiber = nextFiber.parent
   }
-  return fiber.parent?.sibling
 }
 
 const React = {

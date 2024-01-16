@@ -70,7 +70,7 @@ function commitWork(fiber) {
   }
 
   if (fiber.dom) {
-    fiberParent.parent.dom.append(fiber.dom)
+    fiberParent.dom.append(fiber.dom)
   }
   commitWork(fiber.child)
   commitWork(fiber.sibling)

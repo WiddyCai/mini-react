@@ -1,7 +1,7 @@
 import React from "./core/React.js";
 
 let count = 10
-let props = {id: "1"}
+let props = {id: "9527"}
 function Counter({ num }) {
   function handleClick() {
     console.log('[ click ] >', 123)

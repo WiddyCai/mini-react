@@ -89,17 +89,6 @@ function createDom(type) {
 }
 
 function updateProps(dom, nextProps, prevProps) {
-  // Object.keys(props).forEach(key => {
-  //   if (key !== "children") {
-  //     if (key.startsWith("on")) {
-  //       const eventType = key.slice(2).toLowerCase()
-  //       dom.addEventListener(eventType, props[key])
-  //     } else {
-  //       dom[key] = props[key]
-  //     }
-  //   }
-  // })
-  // {id: "1"} {}
   // 1. old 有 new 无 删除
   Object.keys(prevProps).forEach(key => {
     if (key !== "children") {
@@ -110,7 +99,7 @@ function updateProps(dom, nextProps, prevProps) {
   })
   // 2. old 无 new 有 添加
   // 3. old 有 new 有 修改
-  Object.keys(prevProps).forEach((key) => {
+  Object.keys(nextProps).forEach((key) => {
     if (key !== "children") {
       if (nextProps[key] !== prevProps[key]) {
         if (key.startsWith("on")) {

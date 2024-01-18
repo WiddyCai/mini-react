@@ -43,3 +43,11 @@ V4 代码拆分，API统一
 ##### 实现：在 updateProps 中识别 on 事件，并添加对应事件。
 ##### 2）目标：更新 props
 ##### 目的：理解 dom 树是如何进行 diff 的
+
+### 05
+##### 1）目标：diff 更新 children
+##### 实现：将需要删除的节点放入deletions数组中，后续统一删除。
+##### 2）目标：diff 删除多余的老节点
+##### 实现：reconcilChildren循环完children之后如果还有oldFiber则说明还有多余的节点，将它加入到deletions数组中，后续统一删除。
+##### 3）目标：解 edge case 的方式
+##### 实现：。

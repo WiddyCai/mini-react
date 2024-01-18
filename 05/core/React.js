@@ -2,6 +2,7 @@ let wipRoot = null
 let currentRoot = null
 let nextWorkOfUnit = null
 let deletions = [] // 用来收集需要删除的节点
+let wipFiber = null // 需要更新的节点
 
 /**
  * @param {*} el 
@@ -45,6 +46,10 @@ function workLoop(deadLine) {
   let shouldYield = false;
   while (!shouldYield && nextWorkOfUnit) {
     nextWorkOfUnit = performWorkOfUnit(nextWorkOfUnit)
+
+    if (wipRoot?.sibling?.type === nextWorkOfUnit?.type) {
+      nextWorkOfUnit = undefined
+    }
 
     shouldYield = deadLine.timeRemaining() < 1
   }
@@ -147,14 +152,16 @@ function reconcilChildren(fiber, children) {
         alternate: oldFiber
       }
     } else {
-      newFiber = {
-        type: child.type,
-        props: child.props,
-        child: null,
-        parent: fiber,
-        sibling: null,
-        dom: null,
-        effectTag: "placement"
+      if (child) {
+        newFiber = {
+          type: child.type,
+          props: child.props,
+          child: null,
+          parent: fiber,
+          sibling: null,
+          dom: null,
+          effectTag: "placement"
+        }
       }
       // 将要删除的节点放到 deletions
       if (oldFiber) {
@@ -171,7 +178,9 @@ function reconcilChildren(fiber, children) {
     } else {
       prevChild.sibling = newFiber
     }
-    prevChild = newFiber
+    if (newFiber) {
+      prevChild = newFiber
+    }
   })
   // 此时如果还有oldFiber，那么就是多余的，放进删除数组中
   while (oldFiber) {
@@ -183,6 +192,7 @@ function reconcilChildren(fiber, children) {
 }
 
 function undateFunctionComponent(fiber) {
+  wipFiber = fiber
   // 3. 转换链表 设置好指针
   const children = [fiber.type(fiber.props)]
 
@@ -226,13 +236,21 @@ function performWorkOfUnit(fiber) {
 }
 
 function update() {
-  wipRoot = {
-    dom: currentRoot.dom,
-    props: currentRoot.props,
-    alternate: currentRoot,
-  }
+  let currentFiber = wipFiber
 
-  nextWorkOfUnit = wipRoot
+  return () => {
+    // wipRoot = {
+    //   dom: currentRoot.dom,
+    //   props: currentRoot.props,
+    //   alternate: currentRoot,
+    // }
+    wipRoot = {
+      ...currentFiber,
+      alternate: currentFiber,
+    }
+  
+    nextWorkOfUnit = wipRoot
+  }
 }
 
 const React = {

@@ -16,6 +16,8 @@ function Counter() {
     </div>
   )
   const bar2 = <div>bar</div>
+  const bar3 = <div>bar</div>
+
 
   function handleShowBar() {
     showBar = !showBar
@@ -31,6 +33,9 @@ function Counter() {
       Counter2
       <button onClick={handleShowBar}>showBar</button>
       <dir>{showBar ? bar2 : foo}</dir>
+      Counter3
+      {showBar && bar3}
+      <button onClick={handleShowBar}>showBar</button>
     </div>
   );
 }

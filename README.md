@@ -50,4 +50,4 @@ V4 代码拆分，API统一
 ##### 2）目标：diff 删除多余的老节点
 ##### 实现：reconcilChildren循环完children之后如果还有oldFiber则说明还有多余的节点，将它加入到deletions数组中，后续统一删除。
 ##### 3）目标：解 edge case 的方式
-##### 实现：。
+##### 实现：1.有child时才赋值newFiber；2.有newFiber时，才赋值prevChild

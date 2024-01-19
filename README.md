@@ -51,3 +51,11 @@ V4 代码拆分，API统一
 ##### 实现：reconcilChildren循环完children之后如果还有oldFiber则说明还有多余的节点，将它加入到deletions数组中，后续统一删除。
 ##### 3）目标：解 edge case 的方式
 ##### 实现：1.有child时才赋值newFiber；2.有newFiber时，才赋值prevChild
+
+### 06
+##### 1）目标：实现 useState
+##### 实现：使用stateHooks存储，使用stateHookIndex指向。
+##### 2）目标：批量执行 action
+##### 实现：通过queue收集，当使用useState时，然后批量调用 action。
+##### 3）目标：优化
+##### 实现：先 action 一下 stateHook.state，如果值相同，直接 return。

@@ -59,3 +59,7 @@ V4 代码拆分，API统一
 ##### 实现：通过queue收集，当使用useState时，然后批量调用 action。
 ##### 3）目标：优化
 ##### 实现：先 action 一下 stateHook.state，如果值相同，直接 return。
+
+### 07
+##### 1）目标：实现 useEffect
+##### 实现：使用effectHooks存储，使用 commitEffectHooks 去调用对应hook里的callback。

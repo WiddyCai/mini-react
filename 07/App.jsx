@@ -13,13 +13,28 @@ function Foo() {
 
   React.useEffect(() => {
     console.log('init')
+    // clean up
+    return () => {
+      console.log("cleanup 0");
+    }
   }, [])
   
-  useEffect(() => {
-    console.log('[ update ]')
+  React.useEffect(() => {
+    console.log('[ update ]', count)
     // clean up
+    return () => {
+      console.log("cleanup 1");
+    }
   }, [count])
 
+  React.useEffect(() => {
+    console.log('[ update ]', count)
+    // clean up
+    return () => {
+      console.log("cleanup 2");
+    }
+  }, [count])
+  
   return (
     <div>
       <h1>foo</h1>
